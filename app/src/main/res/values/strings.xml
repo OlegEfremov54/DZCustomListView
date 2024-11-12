@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">DZCustomListView</string>
+    <string name="infoStr">Информация о приложении</string>
+    <string name="exit">Выход</string>
+    <string name="text_view_title">Магазин продуктов</string>
+    <string name="button_start">Создать магазин</string>
+    <string name="text_view_name_product">Наименование продукта</string>
+    <string name="text_view_price_product">Цена продукта</string>
+</resources>
