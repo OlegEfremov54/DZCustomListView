@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -26,16 +27,18 @@ import androidx.recyclerview.widget.ListAdapter
 import java.io.IOException
 
 class ActivityShop : AppCompatActivity() {
+
     private lateinit var photoPickerLauncher: ActivityResultLauncher<Intent>
-    var bitmap: Bitmap? = null
-    var products: MutableList<Product> = mutableListOf()
+
     private val GALLERY_REQUEST = 302
     private lateinit var toolbarShop: Toolbar
     private lateinit var editImageIV: ImageView
     private lateinit var productNameET: EditText
     private lateinit var productPriceET: EditText
     private lateinit var addBTN: Button
+
     private lateinit var listViewLV: ListView
+    var bitmap: Bitmap? = null
     private lateinit var productViewModel: ProductViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,25 +51,14 @@ class ActivityShop : AppCompatActivity() {
             insets
         }
 
-        toolbarShop = findViewById(R.id.toolbarShop)
-        setSupportActionBar(toolbarShop)
-        title = " Магазин продуктов"
-        toolbarShop.subtitle = "  Версия 1. Страница магазина"
-        toolbarShop.setLogo(R.drawable.shop)
+        extracted()
 
-        editImageIV = findViewById(R.id.editImageIV)
-        productNameET = findViewById(R.id.productNameET)
-        productPriceET = findViewById(R.id.productPriceET)
-        addBTN = findViewById(R.id.addBTN)
-
-        listViewLV = findViewById(R.id.listViewLV)
-        productViewModel= ViewModelProvider(this)[ProductViewModel::class.java]
-
-        val adapter = ListAdapter(this@ActivityShop, products)
+        productViewModel = ViewModelProvider(this)[ProductViewModel::class.java]
+        val adapter = ListAdapter(this@ActivityShop, productViewModel.products)
         listViewLV.adapter = adapter
 
         productViewModel.listProduct.observe(this, Observer { it ->
-            val adapter = ListAdapter(this@ActivityShop, products)
+            val adapter = ListAdapter(this@ActivityShop, productViewModel.products)
             adapter.notifyDataSetChanged()
         })
 
@@ -82,7 +74,6 @@ class ActivityShop : AppCompatActivity() {
             }
         }
         
-
         editImageIV.setOnClickListener {
             val photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
@@ -91,18 +82,43 @@ class ActivityShop : AppCompatActivity() {
 
         addBTN.setOnClickListener {
             if (productNameET.text.isEmpty() || productPriceET.text.isEmpty()) return@setOnClickListener
-            val productName = productNameET.text.toString()
-            val productPrice = productPriceET.text.toString()
-            val productImage = bitmap
-            val product = Product(productName, productPrice, productImage)
-            products.add(product)
-            val listAdapter = ListAdapter(this@ActivityShop, products)
+            val name = productNameET.text.toString()
+            val price = productPriceET.text.toString()
+            val image = bitmap
+            val product = Product(name, price, image)
+            productViewModel.addProduct(product)
+            val listAdapter = ListAdapter(this@ActivityShop, productViewModel.products)
             listViewLV.adapter = listAdapter
             listAdapter.notifyDataSetChanged()
             productNameET.text.clear()
             productPriceET.text.clear()
             editImageIV.setImageResource(R.drawable.baseline_production_quantity_limits_24)
         }
+
+        listViewLV.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, view, position, id ->
+                val listAdapter = ListAdapter(this@ActivityShop, productViewModel.products)
+                listViewLV.adapter = listAdapter
+                val product = listViewLV.adapter.getItem(position)
+                productViewModel.products.remove(product)
+                Toast.makeText(this, "Продукт ${product} удалён", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun extracted() {
+        toolbarShop = findViewById(R.id.toolbarShop)
+        setSupportActionBar(toolbarShop)
+        title = " Магазин продуктов"
+        toolbarShop.subtitle = "  Версия 1. Страница магазина"
+        toolbarShop.setLogo(R.drawable.shop)
+
+        editImageIV = findViewById(R.id.editImageIV)
+        productNameET = findViewById(R.id.productNameET)
+        productPriceET = findViewById(R.id.productPriceET)
+        addBTN = findViewById(R.id.addBTN)
+
+        listViewLV = findViewById(R.id.listViewLV)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

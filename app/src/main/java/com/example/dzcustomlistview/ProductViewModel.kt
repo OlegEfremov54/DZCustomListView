@@ -13,6 +13,7 @@ class ProductViewModel:ViewModel() {
 
     fun addProduct(product: Product) {
         products.add(product)
+
     }
 }
 

@@ -13,9 +13,11 @@ class ListAdapter (context: Context, productList: MutableList<Product>): ArrayAd
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var view = convertView
         val product = getItem(position)
+
         if (view == null) {
             view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false)
         }
+
         val imageViewIV = view?.findViewById<ImageView>(R.id.imageViewIV)
         val productNameTV = view?.findViewById<TextView>(R.id.productNameTV)
         val productPriceTV = view?.findViewById<TextView>(R.id.productPriceTV)
@@ -23,6 +25,7 @@ class ListAdapter (context: Context, productList: MutableList<Product>): ArrayAd
         imageViewIV?.setImageBitmap(product?.image)
         productNameTV?.text = product?.name
         productPriceTV?.text = product?.price
+
         return view!!
     }
 }
