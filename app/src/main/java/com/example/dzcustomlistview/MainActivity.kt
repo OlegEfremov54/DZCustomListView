@@ -27,11 +27,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        toolbarMain = findViewById(R.id.toolbarMain)
-        setSupportActionBar(toolbarMain)
-        title = " Магазин продуктов"
-        toolbarMain.subtitle = "  Версия 1. Главная страница"
-        toolbarMain.setLogo(R.drawable.shop)
+        extractedTool()
 
         startBTN = findViewById(R.id.startBTN)
 
@@ -40,6 +36,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    private fun extractedTool() {
+        toolbarMain = findViewById(R.id.toolbarMain)
+        setSupportActionBar(toolbarMain)
+        title = " Магазин продуктов"
+        toolbarMain.subtitle = "  Версия 1. Главная страница"
+        toolbarMain.setLogo(R.drawable.shop)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

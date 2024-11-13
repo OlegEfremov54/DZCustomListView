@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ListAdapter
 import java.io.IOException
 
@@ -33,6 +36,7 @@ class ActivityShop : AppCompatActivity() {
     private lateinit var productPriceET: EditText
     private lateinit var addBTN: Button
     private lateinit var listViewLV: ListView
+    private lateinit var productViewModel: ProductViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +58,17 @@ class ActivityShop : AppCompatActivity() {
         productNameET = findViewById(R.id.productNameET)
         productPriceET = findViewById(R.id.productPriceET)
         addBTN = findViewById(R.id.addBTN)
+
         listViewLV = findViewById(R.id.listViewLV)
+        productViewModel= ViewModelProvider(this)[ProductViewModel::class.java]
+
+        val adapter = ListAdapter(this@ActivityShop, products)
+        listViewLV.adapter = adapter
+
+        productViewModel.listProduct.observe(this, Observer { it ->
+            val adapter = ListAdapter(this@ActivityShop, products)
+            adapter.notifyDataSetChanged()
+        })
 
         photoPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -67,6 +81,7 @@ class ActivityShop : AppCompatActivity() {
                 editImageIV.setImageBitmap(bitmap)
             }
         }
+        
 
         editImageIV.setOnClickListener {
             val photoPickerIntent = Intent(Intent.ACTION_PICK)
